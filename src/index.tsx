@@ -3,13 +3,35 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client'
+import {offsetLimitPagination} from "@apollo/client/utilities";
+
+const client = new ApolloClient({
+    uri: 'https://71z1g.sse.codesandbox.io/', //'https://flyby-router-demo.herokuapp.com/'
+    cache: new InMemoryCache({
+        typePolicies : {
+            Query: {
+                fields: {
+                    dogs: offsetLimitPagination()
+                }
+            }
+        }
+    }),
+    defaultOptions: {
+        watchQuery: {
+            nextFetchPolicy: "cache-first"
+        }
+    }
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+      <ApolloProvider client={client}>
+          <App />
+      </ApolloProvider>
   </React.StrictMode>
 );
 
